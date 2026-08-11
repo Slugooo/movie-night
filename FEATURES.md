@@ -30,6 +30,15 @@ Last updated: August 10, 2026
 - Show who supplied the watchlist suggestion and allow rerolling.
 - Confirm the supported Letterboxd API/authentication path before implementation; public-page scraping should not be the long-term integration.
 
+### 4. Movie Night history
+
+- Save the winning movie and date when a game finishes.
+- Show a simple timeline or scrapbook of past movie nights.
+- Include the participants and the other movies that were submitted.
+- Let the host add an optional note, photo, or group rating afterward.
+- Prevent accidental duplicate entries if the winner screen is refreshed.
+- Keep history tied to the host account when sign-in exists, with an interim browser-local or share-code option if history ships first.
+
 ## Already implemented
 
 - Deployed production app with a short Vercel URL.
@@ -45,3 +54,4 @@ Last updated: August 10, 2026
 - Whether Letterboxd suggestions draw from only the host or combine every connected player's watchlist.
 - Whether watchlist picks are fully random or filtered before the draw.
 - Whether wheel sound effects should default on or require an explicit toggle.
+- Whether Movie Night history is private to the host or viewable through a shared group link.
