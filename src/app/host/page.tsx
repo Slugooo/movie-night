@@ -8,7 +8,7 @@ import { TrailerPlayer } from "@/components/trailer-player";
 
 export default function HostPage() {
   const { game, gameId, isLoading, error, refresh } = useGame();
-  const [isWorking, setIsWorking] = useState(false); const [trailerKey, setTrailerKey] = useState<string | null>(null); const [actionError, setActionError] = useState<string | null>(null);
+  const [isWorking, setIsWorking] = useState(false); const [hostName, setHostName] = useState(""); const [trailerKey, setTrailerKey] = useState<string | null>(null); const [actionError, setActionError] = useState<string | null>(null);
   const isLive = game.status !== "idle"; const currentMovie = game.movies.find((movie) => movie.id === game.currentMovieId) ?? null; const poolMovies = game.movies.filter((movie) => movie.status === "available");
   const voteForPlayer = (playerId: string) => game.votes.find((vote) => vote.playerId === playerId);
   const everyoneReady = game.players.length > 0 && game.players.every((player) => player.ready);
@@ -18,7 +18,7 @@ export default function HostPage() {
   useEffect(() => { if (!gameId || game.status !== "trailer") return; const timer = window.setTimeout(() => void work(() => setRoundPhase(gameId, "voting")), 300); return () => window.clearTimeout(timer); }, [game.status, gameId]);
   async function work(action: () => Promise<void>) { setIsWorking(true); setActionError(null); try { await action(); await refresh(); } catch (caughtError) { const message = typeof caughtError === "object" && caughtError && "message" in caughtError ? String(caughtError.message) : "Could not advance the game."; setActionError(message); } finally { setIsWorking(false); } }
 
-  let action: React.ReactNode = <button disabled={isWorking || isLoading} onClick={() => void work(startGame)}>{isWorking ? "Starting..." : "Start new game"}</button>;
+  let action: React.ReactNode = <><input aria-label="Host name" disabled={isWorking || isLoading} maxLength={24} onChange={(event) => setHostName(event.target.value)} placeholder="Host name" value={hostName} /><button disabled={isWorking || isLoading || !hostName.trim()} onClick={() => void work(() => startGame(hostName))}>{isWorking ? "Starting..." : "Start new game"}</button></>;
   if (isLive && (game.status === "collecting" || game.status === "ready")) action = <><Link className="secondary-button" href="/">Add my two movies</Link><button disabled={isWorking || game.movies.length === 0} onClick={() => void work(() => startRound(gameId!))}>{isWorking ? "Spinning..." : "Spin the wheel"}</button><button className="secondary-button" disabled={isWorking} onClick={() => void work(() => endGame(gameId))}>End game</button></>;
   if (game.status === "spinning" || game.status === "reveal") action = <button className="secondary-button" disabled>Revealing...</button>;
   if (game.status === "trailer") action = <button className="secondary-button" disabled>Starting trailer...</button>;
