@@ -27,7 +27,27 @@ export async function loadActiveGame(): Promise<LoadedGame> {
   return { game: toGameState(activeGame, players, movieData, votes.map((vote: VoteRow) => ({ playerId: vote.player_id, choice: vote.choice }))), gameId: activeGame.id, currentPlayer: myRow ? mapPlayer(myRow) : null, isHost: false };
 }
 
-export async function startGame() { if (!hasSupabaseConfig) return saveGame({ ...emptyGame, status: "collecting", startedAt: Date.now() }); const session = await ensureAnonymousSession(); const { error } = await supabase!.from("games").insert({ host_user_id: session!.user.id }); if (error) throw error; }
+export async function startGame() {
+  if (!hasSupabaseConfig) {
+    const host: Player = { id: crypto.randomUUID(), name: "Host", joinedAt: Date.now(), ready: false, vetoUsed: false };
+    return saveGame({ ...emptyGame, status: "collecting", startedAt: Date.now(), players: [host] });
+  }
+
+  const session = await ensureAnonymousSession();
+  const { data: game, error } = await supabase!
+    .from("games")
+    .insert({ host_user_id: session!.user.id })
+    .select("id")
+    .single();
+  if (error) throw error;
+
+  const { error: playerError } = await supabase!.from("players").insert({
+    game_id: game.id,
+    user_id: session!.user.id,
+    display_name: "Host",
+  });
+  if (playerError) throw playerError;
+}
 export async function endGame(gameId: string | null) { if (!hasSupabaseConfig) return saveGame(emptyGame); if (!gameId) return; const { error } = await supabase!.from("games").update({ status: "ended" }).eq("id", gameId); if (error) throw error; }
 export async function joinGame(name: string) { if (!hasSupabaseConfig) { const currentGame = readGame(); const player: Player = { id: crypto.randomUUID(), name: name.trim(), joinedAt: Date.now(), ready: false, vetoUsed: false }; return saveGame({ ...currentGame, players: [...currentGame.players, player] }); } const session = await ensureAnonymousSession(); const activeGame = await latestActiveGame(); if (!activeGame) throw new Error("The host has not started a game yet."); const { error } = await supabase!.from("players").upsert({ game_id: activeGame.id, user_id: session!.user.id, display_name: name.trim() }, { onConflict: "game_id,user_id" }); if (error) throw error; }
 export async function submitMovie(movie: MovieCandidate, gameId: string, currentPlayer: Player, movieCount: number) { if (movieCount >= 2) throw new Error("You can add up to two movies."); if (!hasSupabaseConfig) { const currentGame = readGame(); return saveGame({ ...currentGame, movies: [...currentGame.movies, { id: crypto.randomUUID(), ...movie, playerId: currentPlayer.id, submittedBy: currentPlayer.name, slot: (movieCount + 1) as 1 | 2, status: "available" }] }); } const { error } = await supabase!.from("movie_submissions").insert({ game_id: gameId, player_id: currentPlayer.id, title: movie.title, tmdb_id: movie.tmdbId, release_year: movie.releaseYear, runtime_minutes: movie.runtimeMinutes, poster_path: movie.posterPath, overview: movie.overview, slot: movieCount + 1 }); if (error) throw error; }
