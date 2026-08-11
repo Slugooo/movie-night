@@ -3,7 +3,8 @@
 :root { --ink: #fffdf7; --muted: #b9b3a8; --surface: #22231f; --surface-raised: #2b2c26; --lime: #d9f165; --coral: #ff7664; --line: rgba(255,253,247,.14); --shadow: 0 1.5rem 4rem rgba(0,0,0,.28); }
 * { box-sizing: border-box; }
 html { background: #161714; }
-body { margin: 0; color: var(--ink); background: radial-gradient(circle at 82% 8%, rgba(255,118,100,.16), transparent 28rem), radial-gradient(circle at 12% 82%, rgba(217,241,101,.1), transparent 32rem), #12130f; font-family: Outfit, Arial, sans-serif; min-height: 100vh; }
+body { isolation: isolate; margin: 0; color: var(--ink); background: radial-gradient(circle at 82% 8%, rgba(255,118,100,.16), transparent 28rem), radial-gradient(circle at 12% 82%, rgba(217,241,101,.1), transparent 32rem), #12130f; font-family: Outfit, Arial, sans-serif; min-height: 100vh; }
+body::before { background-image: linear-gradient(90deg, rgba(18,19,15,.92), rgba(18,19,15,.58) 50%, rgba(18,19,15,.92)), url('https://a.ltrbxd.com/resized/film-poster/4/6/8/0/6/46806-the-incredibles-0-300-0-450-crop.jpg?v=dce597a185'), url('https://a.ltrbxd.com/resized/sm/upload/u0/4o/op/yx/g7spS2Y4SZoQoC6Hn7zoqEqdYqR-0-300-0-450-crop.jpg?v=6d1aaa720c'), url('https://a.ltrbxd.com/resized/film-poster/5/1/8/9/0/51890-oceans-eleven-2001-0-300-0-450-crop.jpg?v=9986b9227a'), url('https://a.ltrbxd.com/resized/film-poster/2/6/8/9/5/0/268950-baby-driver-0-300-0-450-crop.jpg?v=61304ddfc8'); background-position: center, -4vw 60%, 28vw 42%, 66vw 58%, 98vw 38%; background-repeat: no-repeat; background-size: cover, 19vw 28.5vw, 19vw 28.5vw, 19vw 28.5vw, 19vw 28.5vw; content: ""; filter: saturate(.72); inset: 0; opacity: .38; pointer-events: none; position: fixed; transform: rotate(-3deg) scale(1.1); z-index: -1; }
 button, input { font: inherit; }
 button { border: 0; border-radius: .85rem; background: var(--lime); box-shadow: 0 .4rem 1rem rgba(217,241,101,.1); color: #1c2110; cursor: pointer; font-weight: 700; padding: 1rem 1.4rem; transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease; }
 button:hover { box-shadow: 0 .65rem 1.4rem rgba(217,241,101,.17); transform: translateY(-2px); } button:disabled { box-shadow: none; cursor: not-allowed; opacity: .45; transform: none; }
@@ -36,6 +37,7 @@ label { font-size: .9rem; font-weight: 600; } input { background: #181914; borde
 :focus-visible { outline: 3px solid rgba(217,241,101,.7); outline-offset: 3px; }
 
 @media (max-width: 600px) {
+  body::before { background-position: center, -24vw 18%, 74vw 30%, -22vw 82%, 75vw 70%; background-size: cover, 48vw 72vw, 48vw 72vw, 48vw 72vw, 48vw 72vw; opacity: .3; transform: rotate(-4deg) scale(1.12); }
   .controller-shell { gap: 1.5rem; }
   .controller-card { border-radius: 1.2rem; }
   .control-buttons, .control-buttons input, .control-buttons a, .control-buttons button { width: 100%; }
