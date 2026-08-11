@@ -27,9 +27,12 @@ export async function loadActiveGame(): Promise<LoadedGame> {
   return { game: toGameState(activeGame, players, movieData, votes.map((vote: VoteRow) => ({ playerId: vote.player_id, choice: vote.choice }))), gameId: activeGame.id, currentPlayer: myRow ? mapPlayer(myRow) : null, isHost: false };
 }
 
-export async function startGame() {
+export async function startGame(hostName: string) {
+  const displayName = hostName.trim();
+  if (!displayName) throw new Error("Enter a host name before starting the game.");
+
   if (!hasSupabaseConfig) {
-    const host: Player = { id: crypto.randomUUID(), name: "Host", joinedAt: Date.now(), ready: false, vetoUsed: false };
+    const host: Player = { id: crypto.randomUUID(), name: displayName, joinedAt: Date.now(), ready: false, vetoUsed: false };
     return saveGame({ ...emptyGame, status: "collecting", startedAt: Date.now(), players: [host] });
   }
 
@@ -44,7 +47,7 @@ export async function startGame() {
   const { error: playerError } = await supabase!.from("players").insert({
     game_id: game.id,
     user_id: session!.user.id,
-    display_name: "Host",
+    display_name: displayName,
   });
   if (playerError) throw playerError;
 }
