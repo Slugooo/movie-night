@@ -51,7 +51,15 @@ export async function startGame(hostName: string) {
   });
   if (playerError) throw playerError;
 }
-export async function endGame(gameId: string | null) { if (!hasSupabaseConfig) return saveGame(emptyGame); if (!gameId) return; const { error } = await supabase!.from("games").update({ status: "ended" }).eq("id", gameId); if (error) throw error; }
+export async function endGame(gameId: string | null) {
+  if (!hasSupabaseConfig) return saveGame(emptyGame);
+  if (!gameId) throw new Error("There is no active game to end.");
+
+  await ensureAnonymousSession();
+  const { data, error } = await supabase!.rpc("end_game", { p_game_id: gameId });
+  if (error) throw error;
+  if (!data) throw new Error("The active game could not be ended.");
+}
 export async function joinGame(name: string) { if (!hasSupabaseConfig) { const currentGame = readGame(); const player: Player = { id: crypto.randomUUID(), name: name.trim(), joinedAt: Date.now(), ready: false, vetoUsed: false }; return saveGame({ ...currentGame, players: [...currentGame.players, player] }); } const session = await ensureAnonymousSession(); const activeGame = await latestActiveGame(); if (!activeGame) throw new Error("The host has not started a game yet."); const { error } = await supabase!.from("players").upsert({ game_id: activeGame.id, user_id: session!.user.id, display_name: name.trim() }, { onConflict: "game_id,user_id" }); if (error) throw error; }
 export async function submitMovie(movie: MovieCandidate, gameId: string, currentPlayer: Player, movieCount: number) { if (movieCount >= 2) throw new Error("You can add up to two movies."); if (!hasSupabaseConfig) { const currentGame = readGame(); return saveGame({ ...currentGame, movies: [...currentGame.movies, { id: crypto.randomUUID(), ...movie, playerId: currentPlayer.id, submittedBy: currentPlayer.name, slot: (movieCount + 1) as 1 | 2, status: "available" }] }); } const { error } = await supabase!.from("movie_submissions").insert({ game_id: gameId, player_id: currentPlayer.id, title: movie.title, tmdb_id: movie.tmdbId, release_year: movie.releaseYear, runtime_minutes: movie.runtimeMinutes, poster_path: movie.posterPath, overview: movie.overview, slot: movieCount + 1 }); if (error) throw error; }
 export async function changeMovie(movie: MovieCandidate, movieId: string, currentPlayer: Player) { if (!hasSupabaseConfig) { const currentGame = readGame(); return saveGame({ ...currentGame, movies: currentGame.movies.map((submission) => submission.id === movieId && submission.playerId === currentPlayer.id ? { ...submission, ...movie } : submission) }); } const { error } = await supabase!.from("movie_submissions").update({ title: movie.title, tmdb_id: movie.tmdbId, release_year: movie.releaseYear, runtime_minutes: movie.runtimeMinutes, poster_path: movie.posterPath, overview: movie.overview }).eq("id", movieId); if (error) throw error; }
