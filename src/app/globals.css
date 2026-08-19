@@ -74,6 +74,27 @@ label { font-size: .9rem; font-weight: 600; } input { background: #181914; borde
 }
 
 @media (orientation: landscape) and (max-height: 520px) {
+  .controller-shell { gap: .45rem; height: 100dvh; max-width: none; min-height: 0; padding: max(.45rem, env(safe-area-inset-top)) max(.75rem, env(safe-area-inset-right)) max(.45rem, env(safe-area-inset-bottom)) max(.75rem, env(safe-area-inset-left)); }
+  .controller-nav { min-height: 2rem; }
+  .guest-room-pill { padding: .3rem .55rem; }
+  .movie-picker-card { display: grid; flex: 1; gap: .35rem .75rem; grid-template-areas: "eyebrow search" "title search" "copy cancel" "rules results" "submissions results" "ready results"; grid-template-columns: minmax(12rem, .8fr) minmax(20rem, 1.2fr); grid-template-rows: auto auto auto minmax(0, 1fr) auto auto; min-height: 0; overflow: hidden; padding: .7rem .85rem; }
+  .movie-picker-card > .eyebrow { grid-area: eyebrow; margin: 0; }
+  .controller-shell .movie-picker-card > h1 { font-size: clamp(1.8rem, 7vh, 2.5rem); grid-area: title; margin: 0; }
+  .movie-picker-card > .muted { font-size: .76rem; grid-area: copy; line-height: 1.25; margin: 0; }
+  .movie-picker-card > .rules-card { grid-area: rules; margin: 0; overflow: auto; padding: .5rem .6rem; }
+  .movie-picker-card > .rules-card span { font-size: .68rem; }
+  .movie-picker-card > .search-field { align-self: start; grid-area: search; }
+  .movie-picker-card > .search-field label { display: none; }
+  .movie-picker-card > .search-field input { font-size: .85rem; min-height: 2.4rem; padding: .55rem .7rem; width: 100%; }
+  .movie-picker-card > .text-button { grid-area: cancel; justify-self: start; padding: .15rem; }
+  .movie-picker-card > .movie-results { grid-area: results; margin: 0; max-height: 100%; overflow: auto; }
+  .movie-picker-card > .movie-results button { gap: .55rem; min-height: 3.5rem; padding: .35rem 0; }
+  .movie-picker-card > .movie-results img, .movie-picker-card > .movie-results .poster-placeholder { height: 3rem; width: 2rem; }
+  .movie-picker-card > .movie-results em { display: none; }
+  .movie-picker-card > .submission-list { grid-area: submissions; margin: 0; max-height: 4.5rem; overflow: auto; }
+  .movie-picker-card > .submission-list li { font-size: .75rem; padding: .3rem .1rem; }
+  .movie-picker-card > button:last-child { grid-area: ready; margin: 0; min-height: 2.4rem; padding: .55rem .7rem; }
+  .controller-shell > .leave-room-button { margin: 0; min-height: 2.2rem; padding: .4rem .8rem; }
   .host-shell-picking { grid-template-rows: auto 1fr auto; min-height: 100dvh; padding: max(.45rem, env(safe-area-inset-top)) max(.75rem, env(safe-area-inset-right)) max(.45rem, env(safe-area-inset-bottom)) max(.75rem, env(safe-area-inset-left)); }
   .host-shell-picking .host-nav { min-height: 2rem; }
   .host-shell-picking .stage { align-items: stretch; display: grid; gap: .55rem .8rem; grid-template-areas: "title picker" "room picker" "copy picker" "players pool" "players history"; grid-template-columns: minmax(12rem, .8fr) minmax(18rem, 1.2fr); grid-template-rows: auto auto auto minmax(0, 1fr) auto; justify-content: stretch; margin: .45rem auto; max-width: 72rem; min-height: 0; overflow: auto; text-align: left; }
