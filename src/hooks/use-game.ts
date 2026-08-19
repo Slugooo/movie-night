@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { LoadedGame, loadActiveGame } from "@/lib/game-service";
 import { hasSupabaseConfig, supabase } from "@/lib/supabase";
 
-const initialGame: LoadedGame = { game: { status: "idle", startedAt: null, players: [], movies: [], currentMovieId: null, votes: [] }, gameId: null, currentPlayer: null, isHost: false };
+const initialGame: LoadedGame = { game: { status: "idle", startedAt: null, players: [], movies: [], currentMovieId: null, votes: [] }, gameId: null, roomCode: null, currentPlayer: null, isHost: false };
 
 export function useGame() {
   const [loadedGame, setLoadedGame] = useState<LoadedGame>(initialGame);
@@ -28,5 +28,5 @@ export function useGame() {
     return () => { void supabase!.removeChannel(channel); };
   }, [refresh]);
 
-  return { game: loadedGame.game, gameId: loadedGame.gameId, currentPlayer: loadedGame.currentPlayer, isLoading, error, refresh };
+  return { game: loadedGame.game, gameId: loadedGame.gameId, roomCode: loadedGame.roomCode, currentPlayer: loadedGame.currentPlayer, isHost: loadedGame.isHost, isLoading, error, refresh };
 }
