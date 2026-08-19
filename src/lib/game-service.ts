@@ -169,6 +169,23 @@ export async function joinGame(name: string, requestedRoomCode: number) {
   rememberRoomCode(activeGame.room_code);
 }
 
+export async function leaveGame(gameId: string, currentPlayer: Player) {
+  if (!hasSupabaseConfig) {
+    const currentGame = readGame();
+    return saveGame({
+      ...currentGame,
+      players: currentGame.players.filter((player) => player.id !== currentPlayer.id),
+      movies: currentGame.movies.filter((movie) => movie.playerId !== currentPlayer.id),
+      votes: currentGame.votes.filter((vote) => vote.playerId !== currentPlayer.id),
+    });
+  }
+
+  const { data, error } = await supabase!.rpc("leave_game", { p_game_id: gameId });
+  if (error) throw error;
+  if (!data) throw new Error("You could not leave this room.");
+  window.localStorage.removeItem(roomStorageKey);
+}
+
 export async function submitMovie(movie: MovieCandidate, gameId: string, currentPlayer: Player, movieCount: number) {
   if (movieCount >= 2) throw new Error("You can add up to two movies.");
   if (!hasSupabaseConfig) {
