@@ -39,6 +39,11 @@ label { font-size: .9rem; font-weight: 600; } input { background: #181914; borde
 .control-buttons input { min-width: 12rem; }
 .control-buttons .secondary-button { align-items: center; display: inline-flex; justify-content: center; padding: .95rem 1.2rem; }
 .movie-pool { backdrop-filter: blur(14px); box-shadow: var(--shadow); }
+.movie-history { backdrop-filter: blur(14px); background: rgba(22,23,20,.62); border: 1px solid var(--line); border-radius: 1.3rem; margin-top: 1rem; max-width: 44rem; padding: 1rem 1.2rem; text-align: left; width: 100%; }
+.movie-history ul { display: flex; flex-wrap: wrap; gap: .5rem; list-style: none; margin: .8rem 0 0; padding: 0; }
+.movie-history li { align-items: center; background: rgba(255,118,100,.1); border: 1px solid rgba(255,118,100,.2); border-radius: 999px; display: flex; gap: .45rem; padding: .45rem .7rem; }
+.movie-history li span { font-size: .82rem; font-weight: 600; }
+.movie-history li small { color: var(--muted); font-size: .68rem; }
 .stage > h1 { text-shadow: 0 .25rem 2rem rgba(0,0,0,.35); }
 :focus-visible { outline: 3px solid rgba(217,241,101,.7); outline-offset: 3px; }
 
@@ -53,6 +58,25 @@ label { font-size: .9rem; font-weight: 600; } input { background: #181914; borde
 }
 
 @media (orientation: landscape) and (max-height: 520px) {
+  .host-shell-picking { grid-template-rows: auto 1fr auto; min-height: 100dvh; padding: max(.45rem, env(safe-area-inset-top)) max(.75rem, env(safe-area-inset-right)) max(.45rem, env(safe-area-inset-bottom)) max(.75rem, env(safe-area-inset-left)); }
+  .host-shell-picking .host-nav { min-height: 2rem; }
+  .host-shell-picking .stage { align-items: stretch; display: grid; gap: .55rem .8rem; grid-template-areas: "title pool" "room pool" "copy pool" "players history"; grid-template-columns: minmax(12rem, .8fr) minmax(18rem, 1.2fr); grid-template-rows: auto auto auto minmax(0, 1fr); justify-content: stretch; margin: .45rem auto; max-width: 72rem; min-height: 0; overflow: auto; text-align: left; }
+  .host-shell-picking .stage-title { font-size: clamp(2rem, 7vh, 3.1rem); grid-area: title; line-height: .88; }
+  .host-shell-picking .room-code { align-self: start; font-size: .68rem; grid-area: room; justify-self: start; margin: 0; padding: .42rem .7rem; }
+  .host-shell-picking .room-code strong { font-size: 1.8rem; }
+  .host-shell-picking .host-pick-copy { font-size: .78rem; grid-area: copy; margin: 0; }
+  .host-shell-picking .host-pick-players { grid-area: players; max-width: none; overflow: auto; padding: .75rem; }
+  .host-shell-picking .host-pick-players .player-grid { gap: .4rem; margin-top: .55rem; }
+  .host-shell-picking .host-pick-players .player-grid li { font-size: .78rem; padding: .4rem; }
+  .host-shell-picking .host-pick-pool { grid-area: pool; margin-top: 0; max-height: 100%; max-width: none; overflow: auto; padding: .75rem; }
+  .host-shell-picking .host-pick-pool ul { display: grid; gap: 0 .7rem; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: .45rem; }
+  .host-shell-picking .host-pick-pool li { grid-template-columns: 2.5rem 1fr; min-width: 0; padding: .45rem 0; }
+  .host-shell-picking .host-pick-pool img, .host-shell-picking .host-pick-pool .poster-placeholder { height: 3.4rem; width: 2.3rem; }
+  .host-shell-picking .host-pick-history { grid-area: history; margin-top: 0; max-width: none; overflow: auto; padding: .7rem; }
+  .host-shell-picking .host-controls { margin-top: .35rem; padding: .55rem .7rem; }
+  .host-shell-picking .host-controls p { display: none; }
+  .host-shell-picking .control-buttons { flex-wrap: nowrap; width: 100%; }
+  .host-shell-picking .control-buttons > * { flex: 1; min-height: 2.65rem; padding: .65rem .75rem; text-align: center; }
   .host-shell-trailer { grid-template-rows: auto 1fr; min-height: 100dvh; padding: max(.4rem, env(safe-area-inset-top)) max(.5rem, env(safe-area-inset-right)) max(.4rem, env(safe-area-inset-bottom)) max(.5rem, env(safe-area-inset-left)); }
   .host-shell-trailer .host-nav { margin-bottom: 0; min-height: 2.2rem; }
   .host-shell-trailer .stage { margin: 0 auto; max-width: none; min-height: 0; }
