@@ -15,6 +15,8 @@ export default function HostPage() {
   const isLive = game.status !== "idle";
   const currentMovie = game.movies.find((movie) => movie.id === game.currentMovieId) ?? null;
   const poolMovies = game.movies.filter((movie) => movie.status === "available");
+  const previouslyPickedMovies = game.movies.filter((movie) => movie.status === "rejected");
+  const isPicking = game.status === "collecting" || game.status === "ready";
   const voteForPlayer = (playerId: string) => game.votes.find((vote) => vote.playerId === playerId);
   const currentHostVote = currentPlayer ? voteForPlayer(currentPlayer.id) : null;
   const hostCanVeto = game.status === "voting" && Boolean(gameId && currentMovie && currentPlayer && !currentPlayer.vetoUsed && !currentHostVote);
@@ -88,7 +90,7 @@ export default function HostPage() {
   if (game.status === "selected") action = <button className="secondary-button" disabled={isWorking} onClick={() => void work(() => endGame(gameId))}>End game</button>;
 
   return (
-    <main className={game.status === "voting" && trailerKey ? "host-shell host-shell-trailer" : "host-shell"}>
+    <main className={`host-shell${game.status === "voting" && trailerKey ? " host-shell-trailer" : ""}${isPicking ? " host-shell-picking" : ""}`}>
       <nav className="host-nav">
         <Link className="wordmark" href="/host">MOVIE NIGHT</Link>
         <span className={isLive ? "status-pill live" : "status-pill"}><span aria-hidden="true" /> {isLive ? game.status : "Not started"}</span>
@@ -97,10 +99,10 @@ export default function HostPage() {
         {game.status === "spinning" ? <div className="wheel"><span>Ã°Å¸Å½Â¬</span></div> : (
           <>
             {currentMovie?.posterPath && <img className="winner-poster" alt="" src={`https://image.tmdb.org/t/p/w342${currentMovie.posterPath}`} />}
-            <h1>{game.status === "selected" ? currentMovie?.title ?? "Chosen" : currentMovie?.title ?? (isLive ? "Build the movie pool." : "Ready to pick a movie?")}</h1>
+            <h1 className="stage-title">{game.status === "selected" ? currentMovie?.title ?? "Chosen" : currentMovie?.title ?? (isLive ? "Build the movie pool." : "Ready to pick a movie?")}</h1>
           </>
         )}
-        {roomCode && (game.status === "collecting" || game.status === "ready") && <p className="room-code">Room <strong>{roomCode}</strong></p>}
+        {roomCode && isPicking && <p className="room-code">Join room <strong>{roomCode}</strong></p>}
         {game.status === "voting" && (trailerKey ? (
           <div className="trailer-shell">
             <TrailerPlayer videoId={trailerKey} onEnded={() => void work(() => finalizeRound(gameId!))} />
@@ -109,15 +111,21 @@ export default function HostPage() {
         ) : <p className="stage-copy">No trailer found. Finalize voting when ready.</p>)}
         {(game.status === "collecting" || game.status === "ready") && (
           <>
-            <p className="stage-copy">{everyoneReady ? "Everyone is ready. Spin when you are." : "Spin whenever the pool has a movie; readiness is optional."}</p>
-            <div className="players-panel">
+            <p className="stage-copy host-pick-copy">{everyoneReady ? "Everyone is ready. Spin when you are." : "Spin whenever the pool has a movie; readiness is optional."}</p>
+            <div className="players-panel host-pick-players">
               <div className="players-heading"><span>Players ready</span><strong>{game.players.filter((player) => player.ready).length}/{game.players.length}</strong></div>
               <ul className="player-grid">{game.players.map((player, index) => <li key={player.id}><span className={`avatar avatar-${index % 5}`}>{player.name.slice(0, 1).toUpperCase()}</span>{player.name}<small>{player.ready ? "Ready" : "Picking"}</small></li>)}</ul>
             </div>
-            {game.movies.length > 0 && (
-              <div className="movie-pool">
-                <div className="players-heading"><span>Movie pool</span><strong>{game.movies.length}</strong></div>
-                <ul>{game.movies.map((movie) => <li key={movie.id}>{movie.posterPath ? <img alt="" src={`https://image.tmdb.org/t/p/w92${movie.posterPath}`} /> : <span className="poster-placeholder" />}<span className="movie-pool-title">{movie.title}{movie.releaseYear && <small className="movie-year">({movie.releaseYear})</small>}</span>{movie.runtimeMinutes && <small className="movie-runtime">{Math.floor(movie.runtimeMinutes / 60)}h {movie.runtimeMinutes % 60}m</small>}<small className="movie-submitter">Added by {movie.submittedBy}</small></li>)}</ul>
+            {poolMovies.length > 0 && (
+              <div className="movie-pool host-pick-pool">
+                <div className="players-heading"><span>Movie pool</span><strong>{poolMovies.length}</strong></div>
+                <ul>{poolMovies.map((movie) => <li key={movie.id}>{movie.posterPath ? <img alt="" src={`https://image.tmdb.org/t/p/w92${movie.posterPath}`} /> : <span className="poster-placeholder" />}<span className="movie-pool-title">{movie.title}{movie.releaseYear && <small className="movie-year">({movie.releaseYear})</small>}</span>{movie.runtimeMinutes && <small className="movie-runtime">{Math.floor(movie.runtimeMinutes / 60)}h {movie.runtimeMinutes % 60}m</small>}<small className="movie-submitter">Added by {movie.submittedBy}</small></li>)}</ul>
+              </div>
+            )}
+            {previouslyPickedMovies.length > 0 && (
+              <div className="movie-history host-pick-history">
+                <div className="players-heading"><span>Previously picked</span><strong>{previouslyPickedMovies.length}</strong></div>
+                <ul>{previouslyPickedMovies.map((movie) => <li key={movie.id}><span>{movie.title}</span><small>{movie.releaseYear ?? ""}</small></li>)}</ul>
               </div>
             )}
           </>
