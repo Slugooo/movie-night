@@ -125,7 +125,7 @@ export default function HostPage() {
         <span className={isLive ? "status-pill live" : "status-pill"}><span aria-hidden="true" /> {isLive ? game.status : "Not started"}</span>
       </nav>
       <section className="stage" aria-live="polite">
-        {game.status === "spinning" ? <div className="wheel"><span>Ã°Å¸Å½Â¬</span></div> : (
+        {game.status === "spinning" ? <div className="wheel"><span aria-hidden="true">&#127916;</span></div> : (
           <>
             {currentMovie?.posterPath && <img className="winner-poster" alt="" src={`https://image.tmdb.org/t/p/w342${currentMovie.posterPath}`} />}
             <h1 className="stage-title">{game.status === "selected" ? currentMovie?.title ?? "Chosen" : currentMovie?.title ?? (isLive ? "Build the movie pool." : "Ready to pick a movie?")}</h1>
