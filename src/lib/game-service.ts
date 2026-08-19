@@ -104,7 +104,6 @@ export async function loadActiveGame(): Promise<LoadedGame> {
   if (myError) throw myError;
 
   const movieData: MovieSubmission[] = movies
-    .filter((movie: MovieRow) => movie.status !== "rejected")
     .map((movie: MovieRow) => ({ id: movie.id, playerId: movie.player_id, title: movie.title, slot: movie.slot, tmdbId: movie.tmdb_id, releaseYear: movie.release_year, runtimeMinutes: movie.runtime_minutes, posterPath: movie.poster_path, overview: movie.overview, status: movie.status, submittedBy: players.find((player) => player.id === movie.player_id)?.display_name ?? "Someone" }));
 
   return {
