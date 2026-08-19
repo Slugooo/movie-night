@@ -12,6 +12,10 @@ button:hover { box-shadow: 0 .65rem 1.4rem rgba(217,241,101,.17); transform: tra
 .eyebrow { color: var(--lime); font-family: 'DM Mono', monospace; font-size: .73rem; letter-spacing: .13em; margin: 0 0 1rem; text-transform: uppercase; }
 .muted, .stage-copy, .host-controls p, .small-muted { color: var(--muted); line-height: 1.55; }
 .controller-shell { display: flex; flex-direction: column; gap: 2.5rem; margin: 0 auto; max-width: 33rem; min-height: 100vh; padding: 2rem 1.25rem; }
+.controller-nav { align-items: center; display: flex; justify-content: space-between; }
+.guest-room-pill { align-items: baseline; backdrop-filter: blur(12px); background: rgba(18,19,15,.76); border: 1px solid var(--line); border-radius: 999px; display: flex; font-family: 'DM Mono', monospace; font-size: .68rem; gap: .4rem; letter-spacing: .08em; padding: .45rem .7rem; text-transform: uppercase; }
+.guest-room-pill strong { color: var(--lime); font-size: 1rem; }
+.leave-room-button { align-self: center; background: rgba(255,118,100,.1); border: 1px solid rgba(255,118,100,.35); box-shadow: none; color: #ffab9d; margin-top: -1rem; }
 .controller-shell.centered { align-items: center; justify-content: center; text-align: center; }
 .controller-shell h1 { font-size: clamp(2.3rem, 12vw, 4rem); letter-spacing: -.065em; line-height: .95; margin: .1rem 0 1rem; }
 .controller-card { backdrop-filter: blur(18px); background: rgba(34,35,31,.88); border: 1px solid var(--line); border-radius: 1.5rem; box-shadow: var(--shadow); padding: clamp(1.35rem, 5vw, 2rem); }
@@ -44,6 +48,18 @@ label { font-size: .9rem; font-weight: 600; } input { background: #181914; borde
 .movie-history li { align-items: center; background: rgba(255,118,100,.1); border: 1px solid rgba(255,118,100,.2); border-radius: 999px; display: flex; gap: .45rem; padding: .45rem .7rem; }
 .movie-history li span { font-size: .82rem; font-weight: 600; }
 .movie-history li small { color: var(--muted); font-size: .68rem; }
+.host-movie-picker { backdrop-filter: blur(14px); background: rgba(22,23,20,.76); border: 1px solid var(--line); border-radius: 1.3rem; margin-top: 1rem; max-width: 44rem; padding: 1rem 1.2rem; text-align: left; width: 100%; }
+.host-movie-search { display: grid; gap: .4rem; margin-top: .75rem; }
+.host-movie-search label { color: var(--muted); font-size: .72rem; }
+.host-movie-search input { width: 100%; }
+.host-movie-results, .host-submission-list { list-style: none; margin: .65rem 0 0; padding: 0; }
+.host-movie-results { border: 1px solid var(--line); border-radius: .75rem; max-height: 15rem; overflow: auto; }
+.host-movie-results li + li, .host-submission-list li + li { border-top: 1px solid var(--line); }
+.host-movie-results button { align-items: center; background: transparent; border-radius: 0; box-shadow: none; color: var(--ink); display: flex; gap: .65rem; padding: .55rem; text-align: left; width: 100%; }
+.host-movie-results button:hover { background: rgba(255,255,255,.05); transform: none; }
+.host-movie-results img, .host-movie-results .poster-placeholder { height: 3.2rem; object-fit: cover; width: 2.15rem; }
+.host-movie-results small { color: var(--lime); display: block; font-size: .68rem; margin-top: .15rem; }
+.host-submission-list li { align-items: center; display: flex; font-size: .82rem; justify-content: space-between; padding: .35rem 0; }
 .stage > h1 { text-shadow: 0 .25rem 2rem rgba(0,0,0,.35); }
 :focus-visible { outline: 3px solid rgba(217,241,101,.7); outline-offset: 3px; }
 
@@ -60,7 +76,7 @@ label { font-size: .9rem; font-weight: 600; } input { background: #181914; borde
 @media (orientation: landscape) and (max-height: 520px) {
   .host-shell-picking { grid-template-rows: auto 1fr auto; min-height: 100dvh; padding: max(.45rem, env(safe-area-inset-top)) max(.75rem, env(safe-area-inset-right)) max(.45rem, env(safe-area-inset-bottom)) max(.75rem, env(safe-area-inset-left)); }
   .host-shell-picking .host-nav { min-height: 2rem; }
-  .host-shell-picking .stage { align-items: stretch; display: grid; gap: .55rem .8rem; grid-template-areas: "title pool" "room pool" "copy pool" "players history"; grid-template-columns: minmax(12rem, .8fr) minmax(18rem, 1.2fr); grid-template-rows: auto auto auto minmax(0, 1fr); justify-content: stretch; margin: .45rem auto; max-width: 72rem; min-height: 0; overflow: auto; text-align: left; }
+  .host-shell-picking .stage { align-items: stretch; display: grid; gap: .55rem .8rem; grid-template-areas: "title picker" "room picker" "copy picker" "players pool" "players history"; grid-template-columns: minmax(12rem, .8fr) minmax(18rem, 1.2fr); grid-template-rows: auto auto auto minmax(0, 1fr) auto; justify-content: stretch; margin: .45rem auto; max-width: 72rem; min-height: 0; overflow: auto; text-align: left; }
   .host-shell-picking .stage-title { font-size: clamp(2rem, 7vh, 3.1rem); grid-area: title; line-height: .88; }
   .host-shell-picking .room-code { align-self: start; font-size: .68rem; grid-area: room; justify-self: start; margin: 0; padding: .42rem .7rem; }
   .host-shell-picking .room-code strong { font-size: 1.8rem; }
@@ -68,6 +84,16 @@ label { font-size: .9rem; font-weight: 600; } input { background: #181914; borde
   .host-shell-picking .host-pick-players { grid-area: players; max-width: none; overflow: auto; padding: .75rem; }
   .host-shell-picking .host-pick-players .player-grid { gap: .4rem; margin-top: .55rem; }
   .host-shell-picking .host-pick-players .player-grid li { font-size: .78rem; padding: .4rem; }
+  .host-shell-picking .host-movie-picker { grid-area: picker; margin-top: 0; max-width: none; padding: .65rem .75rem; }
+  .host-shell-picking .host-movie-search { gap: .25rem; margin-top: .4rem; }
+  .host-shell-picking .host-movie-search label { display: none; }
+  .host-shell-picking .host-movie-search input { font-size: .82rem; min-height: 2.35rem; padding: .55rem .7rem; }
+  .host-shell-picking .host-movie-results { max-height: 7.6rem; }
+  .host-shell-picking .host-movie-results button { font-size: .75rem; min-height: 0; padding: .35rem; }
+  .host-shell-picking .host-movie-results img, .host-shell-picking .host-movie-results .poster-placeholder { height: 2.4rem; width: 1.6rem; }
+  .host-shell-picking .host-submission-list { display: flex; gap: .45rem; margin-top: .35rem; }
+  .host-shell-picking .host-submission-list li { background: rgba(217,241,101,.08); border: 1px solid rgba(217,241,101,.18); border-radius: .65rem; flex: 1; gap: .35rem; min-width: 0; padding: .3rem .45rem; }
+  .host-shell-picking .host-submission-list li > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .host-shell-picking .host-pick-pool { grid-area: pool; margin-top: 0; max-height: 100%; max-width: none; overflow: auto; padding: .75rem; }
   .host-shell-picking .host-pick-pool ul { display: grid; gap: 0 .7rem; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: .45rem; }
   .host-shell-picking .host-pick-pool li { grid-template-columns: 2.5rem 1fr; min-width: 0; padding: .45rem 0; }
