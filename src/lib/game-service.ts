@@ -87,7 +87,11 @@ async function activeGameForSession(userId: string): Promise<GameRow | null> {
 }
 
 export async function loadActiveGame(): Promise<LoadedGame> {
-  if (!hasSupabaseConfig) return { game: readGame(), gameId: null, roomCode: 1, currentPlayer: null, isHost: false };
+  if (!hasSupabaseConfig) {
+    const game = readGame();
+    const currentPlayer = game.players[0] ?? null;
+    return { game, gameId: null, roomCode: 1, currentPlayer, isHost: Boolean(currentPlayer) };
+  }
 
   const session = await ensureAnonymousSession();
   const activeGame = await activeGameForSession(session!.user.id);
