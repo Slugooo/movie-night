@@ -23,11 +23,12 @@ export default function HostPage() {
   const poolMovies = game.movies.filter((movie) => movie.status === "available");
   const previouslyPickedMovies = game.movies.filter((movie) => movie.status === "rejected");
   const hostMovies = currentPlayer ? game.movies.filter((movie) => movie.playerId === currentPlayer.id && movie.status !== "rejected") : [];
+  const remainingMovies = poolMovies.filter((movie) => movie.id !== currentMovie?.id);
+  const playersWithVetos = game.players.filter((player) => !player.vetoUsed);
   const isPicking = game.status === "collecting" || game.status === "ready";
   const voteForPlayer = (playerId: string) => game.votes.find((vote) => vote.playerId === playerId);
   const currentHostVote = currentPlayer ? voteForPlayer(currentPlayer.id) : null;
   const hostCanVeto = game.status === "voting" && Boolean(gameId && currentMovie && currentPlayer && !currentPlayer.vetoUsed && !currentHostVote);
-  const everyoneReady = game.players.length > 0 && game.players.every((player) => player.ready);
 
   useEffect(() => {
     if (!isPicking || movieSearch.trim().length < 2) { setMovieResults([]); return; }
@@ -89,10 +90,10 @@ export default function HostPage() {
   const vetoCurrentMovie = () => work(() => castVote(gameId!, currentMovie!.id, "veto"));
 
   async function chooseHostMovie(movie: MovieCandidate) {
-    if (!currentPlayer || !gameId) return;
+    if (!currentPlayer) return;
     await work(async () => {
       if (editingMovieId) await changeMovie(movie, editingMovieId, currentPlayer);
-      else await submitMovie(movie, gameId, currentPlayer, hostMovies.length);
+      else await submitMovie(movie, gameId ?? "local", currentPlayer, hostMovies.length);
       setEditingMovieId(null);
       setMovieSearch("");
       setMovieResults([]);
@@ -119,7 +120,7 @@ export default function HostPage() {
   if (game.status === "selected") action = <button className="secondary-button" disabled={isWorking} onClick={() => void work(() => endGame(gameId))}>End game</button>;
 
   return (
-    <main className={`host-shell${game.status === "voting" && trailerKey ? " host-shell-trailer" : ""}${isPicking ? " host-shell-picking" : ""}`}>
+    <main className={`host-shell${game.status === "voting" && trailerKey ? " host-shell-trailer" : ""}${isPicking ? " host-shell-picking" : ""}${game.status === "idle" ? " host-shell-idle" : ""}`}>
       <nav className="host-nav">
         <Link className="wordmark" href="/host">MOVIE NIGHT</Link>
         <span className={isLive ? "status-pill live" : "status-pill"}><span aria-hidden="true" /> {isLive ? game.status : "Not started"}</span>
@@ -128,19 +129,28 @@ export default function HostPage() {
         {game.status === "spinning" ? <div className="wheel"><span aria-hidden="true">&#127916;</span></div> : (
           <>
             {currentMovie?.posterPath && <img className="winner-poster" alt="" src={`https://image.tmdb.org/t/p/w342${currentMovie.posterPath}`} />}
-            <h1 className="stage-title">{game.status === "selected" ? currentMovie?.title ?? "Chosen" : currentMovie?.title ?? (isLive ? "Build the movie pool." : "Ready to pick a movie?")}</h1>
+            {currentMovie && <h1 className="stage-title">{currentMovie.title}</h1>}
           </>
         )}
         {roomCode && isPicking && <p className="room-code">Join room <strong>{roomCode}</strong></p>}
         {game.status === "voting" && (trailerKey ? (
-          <div className="trailer-shell">
-            <TrailerPlayer videoId={trailerKey} onEnded={() => void work(() => finalizeRound(gameId!))} />
-            {hostCanVeto && <button aria-label={`Veto ${currentMovie?.title ?? "this movie"}`} className="veto-button trailer-veto" disabled={isWorking} onClick={() => void vetoCurrentMovie()}>{isWorking ? "Vetoing..." : "Veto movie"}</button>}
-          </div>
+          <>
+            <aside className="trailer-side-panel trailer-movies-panel">
+              <div className="players-heading"><span>Movies remaining</span><strong>{remainingMovies.length}</strong></div>
+              <ul>{remainingMovies.map((movie) => <li key={movie.id}>{movie.title}</li>)}</ul>
+            </aside>
+            <div className="trailer-shell">
+              <TrailerPlayer videoId={trailerKey} onEnded={() => void work(() => finalizeRound(gameId!))} />
+            </div>
+            <aside className="trailer-side-panel trailer-veto-panel">
+              <div className="players-heading"><span>Vetos remaining</span><strong>{playersWithVetos.length}</strong></div>
+              <ul>{playersWithVetos.map((player, index) => <li key={player.id}><span className={`avatar avatar-${index % 5}`}>{player.name.slice(0, 1).toUpperCase()}</span><span>{player.name}</span></li>)}</ul>
+              {hostCanVeto && <button aria-label={`Veto ${currentMovie?.title ?? "this movie"}`} className="veto-button" disabled={isWorking} onClick={() => void vetoCurrentMovie()}>{isWorking ? "Vetoing..." : "Veto movie"}</button>}
+            </aside>
+          </>
         ) : <p className="stage-copy">No trailer found. Finalize voting when ready.</p>)}
         {(game.status === "collecting" || game.status === "ready") && (
           <>
-            <p className="stage-copy host-pick-copy">{everyoneReady ? "Everyone is ready. Spin when you are." : "Spin whenever the pool has a movie; readiness is optional."}</p>
             <div className="host-movie-picker">
               <div className="players-heading"><span>Your movie picks</span><strong>{hostMovies.length}/2</strong></div>
               <div className="host-movie-search">
@@ -150,10 +160,6 @@ export default function HostPage() {
               {editingMovieId && <button className="text-button" onClick={() => { setEditingMovieId(null); setMovieSearch(""); setMovieResults([]); }} type="button">Cancel edit</button>}
               {movieResults.length > 0 && <ul className="host-movie-results">{movieResults.map((movie) => <li key={movie.tmdbId}><button disabled={isWorking} onClick={() => void chooseHostMovie(movie)} type="button">{posterUrl(movie.posterPath) ? <img alt="" src={posterUrl(movie.posterPath)!} /> : <span className="poster-placeholder" />}<span><strong>{movie.title}</strong>{movie.releaseYear && <small>{movie.releaseYear}</small>}</span></button></li>)}</ul>}
               {hostMovies.length > 0 && <ul className="host-submission-list">{hostMovies.map((movie) => <li key={movie.id}><span>{movie.title}{movie.releaseYear ? ` (${movie.releaseYear})` : ""}</span><button className="text-button" onClick={() => { setEditingMovieId(movie.id); setMovieSearch(movie.title); }} type="button">Change</button></li>)}</ul>}
-            </div>
-            <div className="players-panel host-pick-players">
-              <div className="players-heading"><span>Players ready</span><strong>{game.players.filter((player) => player.ready).length}/{game.players.length}</strong></div>
-              <ul className="player-grid">{game.players.map((player, index) => <li key={player.id}><span className={`avatar avatar-${index % 5}`}>{player.name.slice(0, 1).toUpperCase()}</span>{player.name}<small>{player.ready ? "Ready" : "Picking"}</small></li>)}</ul>
             </div>
             {poolMovies.length > 0 && (
               <div className="movie-pool host-pick-pool">
