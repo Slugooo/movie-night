@@ -66,6 +66,8 @@ label { font-size: .9rem; font-weight: 600; } input { background: #181914; borde
 .host-movie-results img, .host-movie-results .poster-placeholder { height: 3.2rem; object-fit: cover; width: 2.15rem; }
 .host-movie-results small { color: var(--lime); display: block; font-size: .68rem; margin-top: .15rem; }
 .host-submission-list li { align-items: center; display: flex; font-size: .82rem; justify-content: space-between; padding: .35rem 0; }
+.chosen-label { background: var(--lime); border-radius: 999px; color: #1c2110; font-family: 'DM Mono', monospace; font-size: .76rem; font-weight: 700; letter-spacing: .12em; margin: 0 0 1rem; padding: .5rem .8rem; text-transform: uppercase; }
+.chosen-copy { color: var(--ink); }
 .stage > h1 { text-shadow: 0 .25rem 2rem rgba(0,0,0,.35); }
 :focus-visible { outline: 3px solid rgba(217,241,101,.7); outline-offset: 3px; }
 
@@ -157,4 +159,19 @@ label { font-size: .9rem; font-weight: 600; } input { background: #181914; borde
   .host-shell-trailer .trailer-side-panel ul { display: grid; flex: 1; grid-auto-rows: minmax(0, 1fr); margin-top: .35rem; min-height: 0; }
   .host-shell-trailer .trailer-side-panel li { font-size: .66rem; line-height: 1.05; padding: .2rem 0; }
   .host-shell-trailer .trailer-veto-panel .veto-button { min-height: 2.5rem; padding: .6rem .45rem; }
+  .host-shell:not(.host-shell-picking):not(.host-shell-trailer) { grid-template-rows: auto 1fr auto; height: 100dvh; min-height: 0; overflow: hidden; padding: max(.45rem, env(safe-area-inset-top)) max(.75rem, env(safe-area-inset-right)) max(.45rem, env(safe-area-inset-bottom)) max(.75rem, env(safe-area-inset-left)); }
+  .host-shell:not(.host-shell-picking):not(.host-shell-trailer) .stage { margin: .35rem auto; min-height: 0; overflow: hidden; }
+  .host-shell:not(.host-shell-picking):not(.host-shell-trailer) .stage-title { font-size: clamp(2.6rem, 13vh, 4.4rem); }
+  .host-shell:not(.host-shell-picking):not(.host-shell-trailer) .host-controls { margin-top: .35rem; padding: .5rem .65rem; }
+  .host-shell:not(.host-shell-picking):not(.host-shell-trailer) .host-controls p { font-size: .68rem; line-height: 1.25; }
+  .host-shell:not(.host-shell-picking):not(.host-shell-trailer) .host-controls p small { display: none; }
+  .host-shell:not(.host-shell-picking):not(.host-shell-trailer) .control-buttons { flex-wrap: nowrap; }
+  .host-shell:not(.host-shell-picking):not(.host-shell-trailer) .control-buttons input { min-width: 10rem; padding: .6rem .75rem; }
+  .host-shell:not(.host-shell-picking):not(.host-shell-trailer) .control-buttons button { padding: .65rem .9rem; white-space: nowrap; }
+  .host-shell:not(.host-shell-trailer) .vote-lobby { max-height: 9rem; overflow: auto; }
+  .host-shell-selected .stage { display: grid; gap: .35rem 1rem; grid-template-areas: "poster label" "poster title" "poster copy"; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto auto auto; justify-content: center; max-width: 58rem; text-align: left; }
+  .host-shell-selected .winner-poster { grid-area: poster; max-height: min(54vh, 13rem); max-width: 9rem; }
+  .host-shell-selected .chosen-label { align-self: end; grid-area: label; justify-self: start; margin: 0; }
+  .host-shell-selected .stage-title { grid-area: title; }
+  .host-shell-selected .chosen-copy { align-self: start; font-size: .88rem; grid-area: copy; margin: 0; }
 }
