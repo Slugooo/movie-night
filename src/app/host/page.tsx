@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { TrailerPlayer } from "@/components/trailer-player";
 import { useGame } from "@/hooks/use-game";
 import { MovieCandidate } from "@/lib/game";
-import { castVote, changeMovie, endGame, finalizeRound, setRoundPhase, startGame, startRound, submitMovie } from "@/lib/game-service";
+import { castVote, changeMovie, endGame, setRoundPhase, startGame, startRound, submitMovie } from "@/lib/game-service";
 
 function posterUrl(path: string | null) { return path ? `https://image.tmdb.org/t/p/w185${path}` : null; }
 
@@ -120,7 +120,7 @@ export default function HostPage() {
   if (game.status === "selected") action = <button className="secondary-button" disabled={isWorking} onClick={() => void work(() => endGame(gameId))}>End game</button>;
 
   return (
-    <main className={`host-shell${game.status === "voting" && trailerKey ? " host-shell-trailer" : ""}${isPicking ? " host-shell-picking" : ""}${game.status === "idle" ? " host-shell-idle" : ""}`}>
+    <main className={`host-shell${game.status === "voting" && trailerKey ? " host-shell-trailer" : ""}${isPicking ? " host-shell-picking" : ""}${game.status === "idle" ? " host-shell-idle" : ""}${game.status === "selected" ? " host-shell-selected" : ""}`}>
       <nav className="host-nav">
         <Link className="wordmark" href="/host">MOVIE NIGHT</Link>
         <span className={isLive ? "status-pill live" : "status-pill"}><span aria-hidden="true" /> {isLive ? game.status : "Not started"}</span>
@@ -128,6 +128,7 @@ export default function HostPage() {
       <section className="stage" aria-live="polite">
         {game.status === "spinning" ? <div className="wheel"><span aria-hidden="true">&#127916;</span></div> : (
           <>
+            {game.status === "selected" && <p className="chosen-label">Movie chosen!</p>}
             {currentMovie?.posterPath && <img className="winner-poster" alt="" src={`https://image.tmdb.org/t/p/w342${currentMovie.posterPath}`} />}
             {currentMovie && <h1 className="stage-title">{currentMovie.title}</h1>}
           </>
@@ -140,7 +141,7 @@ export default function HostPage() {
               <ul>{remainingMovies.map((movie) => <li key={movie.id}>{movie.title}</li>)}</ul>
             </aside>
             <div className="trailer-shell">
-              <TrailerPlayer videoId={trailerKey} onEnded={() => void work(() => finalizeRound(gameId!))} />
+              <TrailerPlayer videoId={trailerKey} />
             </div>
             <aside className="trailer-side-panel trailer-veto-panel">
               <div className="players-heading"><span>Vetos remaining</span><strong>{playersWithVetos.length}</strong></div>
@@ -181,7 +182,7 @@ export default function HostPage() {
             <ul className="player-grid">{game.players.map((player, index) => { const vote = voteForPlayer(player.id); return <li key={player.id}><span className={`avatar avatar-${index % 5}`}>{player.name.slice(0, 1).toUpperCase()}</span><span>{player.name}<small>{vote ? `Voted: ${vote.choice}` : "Choosing"}</small></span><small className={player.vetoUsed ? "veto-used" : "veto-ready"}>{player.vetoUsed ? "Veto used" : "Veto available"}</small></li>; })}</ul>
           </div>
         )}
-        {game.status === "selected" && <p className="stage-copy">Tonight&apos;s movie is locked in. Enjoy.</p>}
+        {game.status === "selected" && <p className="stage-copy chosen-copy">Everyone&apos;s in. Tonight&apos;s movie is locked.</p>}
       </section>
       <footer className="host-controls">
         <div className="control-buttons">{action}</div>
