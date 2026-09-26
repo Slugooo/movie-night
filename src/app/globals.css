@@ -71,6 +71,41 @@ label { font-size: .9rem; font-weight: 600; } input { background: #181914; borde
 .stage > h1 { text-shadow: 0 .25rem 2rem rgba(0,0,0,.35); }
 :focus-visible { outline: 3px solid rgba(217,241,101,.7); outline-offset: 3px; }
 
+/* Movie cards keep posters, titles and metadata together at every size. */
+.movie-card-copy { display: flex; flex-direction: column; gap: .3rem; min-width: 0; }
+.movie-card-copy .movie-pool-title { display: block; font-size: .95rem; line-height: 1.25; overflow-wrap: break-word; }
+.movie-card-meta { align-items: center; color: var(--muted); display: flex; flex-wrap: wrap; font-size: .72rem; gap: .25rem .65rem; line-height: 1.4; }
+.movie-card-runtime { color: var(--lime); white-space: nowrap; }
+.movie-card-submitter { color: var(--muted); font-size: .7rem; overflow-wrap: break-word; }
+.host-pick-slots { display: grid; gap: .5rem; list-style: none; margin: .7rem 0; padding: 0; }
+.host-pick-slots li { align-items: center; background: rgba(255,255,255,.035); border: 1px solid var(--line); border-radius: .8rem; display: grid; gap: .65rem; grid-template-columns: 2.5rem minmax(0, 1fr) auto; min-height: 4.1rem; padding: .4rem .6rem; }
+.host-pick-slots img, .host-pick-slots .poster-placeholder { border-radius: .3rem; height: 3.4rem; object-fit: cover; width: 2.3rem; }
+.host-pick-slots .text-button { min-height: 2.75rem; padding: .4rem; }
+.host-pick-slots .empty-pick { border-style: dashed; color: var(--muted); grid-template-columns: 2.5rem 1fr; }
+.pick-number { align-items: center; border: 1px solid var(--line); border-radius: 50%; color: var(--lime); display: flex; font-family: 'DM Mono', monospace; height: 2rem; justify-content: center; width: 2rem; }
+.empty-pick small { display: block; font-size: .7rem; margin-top: .2rem; }
+.host-search-area { position: relative; }
+.host-search-area .host-movie-search { margin-top: 0; }
+.host-search-area .host-movie-results { background: #22231f; box-shadow: var(--shadow); left: 0; margin: .35rem 0 0; max-height: 15rem; overflow: auto; overscroll-behavior: contain; position: absolute; right: 0; top: 100%; z-index: 20; }
+.host-movie-results button > .movie-card-copy { flex: 1; }
+.host-movie-results .movie-card-meta { font-weight: 400; }
+.cancel-pick-edit { position: absolute; right: .5rem; top: -1.7rem; }
+.host-movie-picker { position: relative; z-index: 2; }
+.host-pick-pool ul { display: grid; gap: .65rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.host-pick-pool li { align-items: center; background: rgba(255,255,255,.035); border: 1px solid var(--line); border-radius: .75rem; display: grid; gap: .7rem; grid-template-columns: 3.5rem minmax(0, 1fr); padding: .6rem; }
+.host-pick-pool img, .host-pick-pool .poster-placeholder { border-radius: .35rem; grid-row: auto; height: 5.1rem; width: 3.4rem; }
+.pool-empty { color: var(--ink); font-size: 1.1rem; line-height: 1.4; margin: auto; padding: 2rem .5rem; text-align: center; }
+.pool-empty span { color: var(--muted); display: block; font-size: .8rem; margin-top: .4rem; }
+.trailer-movies-panel .remaining-movie-list { display: flex; flex-direction: column; gap: .65rem; overflow: auto; overscroll-behavior: contain; }
+.trailer-movies-panel .remaining-movie-list li { align-items: center; display: grid; flex: 0 0 auto; gap: .5rem; grid-template-columns: 2.4rem minmax(0, 1fr); padding: .6rem 0; }
+.remaining-movie-list img, .remaining-movie-list .poster-placeholder { border-radius: .3rem; height: 3.6rem; object-fit: cover; width: 2.4rem; }
+.remaining-empty { color: var(--muted); font-size: .75rem; line-height: 1.4; }
+.host-controls .control-buttons .end-game-button { flex: 0 0 auto; font-size: .75rem; min-height: 2.75rem; padding: .5rem .85rem; width: auto; }
+.host-controls .host-error { color: var(--coral); display: block; }
+.host-vote-actions { display: grid; gap: .45rem; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: auto; width: 100%; }
+.host-vote-actions button { min-height: 2.75rem; padding: .6rem .7rem; width: 100%; }
+.host-vote-confirmation { color: var(--lime); font-size: .75rem; font-weight: 700; margin: auto 0 0; text-align: center; }
+
 @media (max-width: 600px) {
   body::before { background-position: center, -24vw 18%, 74vw 30%, -22vw 82%, 75vw 70%; background-size: cover, 48vw 72vw, 48vw 72vw, 48vw 72vw, 48vw 72vw; opacity: .3; transform: rotate(-4deg) scale(1.12); }
   .controller-shell { gap: 1.5rem; }
@@ -174,4 +209,42 @@ label { font-size: .9rem; font-weight: 600; } input { background: #181914; borde
   .host-shell-selected .chosen-label { align-self: end; grid-area: label; justify-self: start; margin: 0; }
   .host-shell-selected .stage-title { grid-area: title; }
   .host-shell-selected .chosen-copy { align-self: start; font-size: .88rem; grid-area: copy; margin: 0; }
+}
+
+@media (orientation: landscape) and (max-height: 520px) {
+  .host-shell-picking { overflow: visible; }
+  .host-shell-picking .host-nav, .host-shell-trailer .host-nav { min-height: 1.5rem; }
+  .host-shell-picking .stage { gap: .55rem .8rem; grid-template-areas: "picker pool" "room pool" "history pool"; grid-template-columns: minmax(17rem, .9fr) minmax(0, 1.2fr); grid-template-rows: minmax(0, 1fr) auto auto; overflow: visible; }
+  .host-shell-picking .host-movie-picker { display: flex; flex-direction: column; min-height: 0; padding: .6rem .7rem; }
+  .host-shell-picking .host-pick-slots { align-content: start; flex: 1; gap: .35rem; margin: .4rem 0; min-height: 0; overflow: auto; }
+  .host-shell-picking .host-pick-slots li { flex-shrink: 0; font-size: .8rem; gap: .45rem; grid-template-columns: 2rem minmax(0, 1fr) auto; min-height: 3.5rem; padding: .3rem .4rem; }
+  .host-shell-picking .host-pick-slots .empty-pick { grid-template-columns: 2rem minmax(0, 1fr); }
+  .host-shell-picking .host-pick-slots img, .host-shell-picking .host-pick-slots .poster-placeholder { height: 2.8rem; width: 1.9rem; }
+  .host-shell-picking .host-pick-slots .movie-pool-title { font-size: .8rem; }
+  .host-shell-picking .host-pick-slots .movie-card-meta { font-size: .64rem; }
+  .host-shell-picking .host-pick-slots .text-button { font-size: .7rem; }
+  .host-shell-picking .host-search-area { flex: 0 0 auto; }
+  .host-shell-picking .host-search-area .host-movie-results { bottom: calc(100% + .35rem); margin: 0; max-height: min(11rem, calc(100dvh - 11rem)); top: auto; }
+  .host-shell-picking .host-movie-results button { gap: .6rem; min-height: 3.6rem; padding: .45rem .55rem; }
+  .host-shell-picking .host-movie-results .movie-pool-title { font-size: .8rem; line-height: 1.3; }
+  .host-shell-picking .host-movie-results img, .host-shell-picking .host-movie-results .poster-placeholder { height: 3rem; width: 2rem; }
+  .host-shell-picking .room-code { border: 0; background: transparent; font-size: .65rem; gap: .6rem; padding: 0; }
+  .host-shell-picking .room-code strong { font-size: 1.5rem; }
+  .host-shell-picking .host-pick-pool ul { align-content: start; display: grid; flex: 1; gap: .55rem; grid-auto-rows: max-content; grid-template-columns: repeat(2, minmax(0, 1fr)); overflow: auto; overscroll-behavior: contain; padding: .1rem; }
+  .host-shell-picking .host-pick-pool li { align-items: center; gap: .55rem; grid-template-columns: 2.6rem minmax(0, 1fr); min-height: 5.4rem; padding: .45rem; }
+  .host-shell-picking .host-pick-pool img, .host-shell-picking .host-pick-pool .poster-placeholder { grid-row: auto; height: 3.9rem; width: 2.6rem; }
+  .host-shell-picking .host-pick-pool .movie-pool-title { display: block; font-size: .8rem; line-height: 1.25; overflow: visible; overflow-wrap: break-word; -webkit-line-clamp: unset; }
+  .host-shell-picking .host-pick-pool .movie-card-meta { font-size: .64rem; gap: .15rem .45rem; }
+  .host-shell-picking .host-pick-pool .movie-card-submitter { font-size: .6rem; }
+  .host-shell-picking .host-controls { background: transparent; border: 0; margin-top: 0; padding: 0; }
+  .host-shell-picking .control-buttons > button:first-child { flex: 1; }
+  .host-shell-picking .host-pick-history { max-height: 3rem; padding: .35rem .6rem; }
+  .host-shell-trailer .stage { grid-template-columns: minmax(9rem, .9fr) minmax(0, 2.6fr) minmax(7.5rem, .75fr); }
+  .host-shell-trailer .trailer-movies-panel .remaining-movie-list { display: flex; flex: 1; flex-direction: column; gap: .3rem; overflow: auto; }
+  .host-shell-trailer .remaining-movie-list li { gap: .45rem; grid-template-columns: 2.2rem minmax(0, 1fr); min-height: 4rem; padding: .4rem 0; }
+  .host-shell-trailer .remaining-movie-list img, .host-shell-trailer .remaining-movie-list .poster-placeholder { height: 3.3rem; width: 2.2rem; }
+  .host-shell-trailer .remaining-movie-list .movie-pool-title { font-size: .72rem; line-height: 1.25; }
+  .host-shell-trailer .remaining-movie-list .movie-card-meta { font-size: .62rem; gap: .15rem .35rem; }
+  .host-shell-trailer .trailer-veto-panel ul { align-content: start; flex: 1; gap: .35rem; grid-auto-rows: max-content; overflow: auto; }
+  .host-shell-trailer .trailer-veto-panel li { min-height: 2.5rem; }
 }
